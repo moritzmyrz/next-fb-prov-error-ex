@@ -1,15 +1,22 @@
+// import AppleProvider from "next-auth/providers/apple"
+import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import { PrismaClient } from "@prisma/client"
 import NextAuth from "next-auth"
-import GoogleProvider from "next-auth/providers/google"
+import Auth0Provider from "next-auth/providers/auth0"
 import FacebookProvider from "next-auth/providers/facebook"
 import GithubProvider from "next-auth/providers/github"
+import GoogleProvider from "next-auth/providers/google"
 import TwitterProvider from "next-auth/providers/twitter"
-import Auth0Provider from "next-auth/providers/auth0"
-// import AppleProvider from "next-auth/providers/apple"
 // import EmailProvider from "next-auth/providers/email"
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
+
+const prisma = new PrismaClient()
+
 export default NextAuth({
+  adapter: PrismaAdapter(prisma),
+
   // https://next-auth.js.org/configuration/providers/oauth
   providers: [
     /* EmailProvider({
@@ -18,7 +25,7 @@ export default NextAuth({
        }),
     // Temporarily removing the Apple provider from the demo site as the
     // callback URL for it needs updating due to Vercel changing domains
-      
+
     Providers.Apple({
       clientId: process.env.APPLE_ID,
       clientSecret: {
@@ -51,13 +58,4 @@ export default NextAuth({
       issuer: process.env.AUTH0_ISSUER,
     }),
   ],
-  theme: {
-    colorScheme: "light",
-  },
-  callbacks: {
-    async jwt({ token }) {
-      token.userRole = "admin"
-      return token
-    },
-  },
 })
